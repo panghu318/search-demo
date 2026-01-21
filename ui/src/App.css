@@ -1,0 +1,166 @@
+:root {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+.gPage {
+  min-height: 100vh;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.gCenter {
+  width: min(820px, 92vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gLogo {
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+.gSearchBox {
+  width: 100%;
+}
+
+.gInput {
+  width: 100%;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid #d0d7de;
+  padding: 0 18px;
+  font-size: 16px;
+  outline: none;
+}
+
+.gInput:focus {
+  border-color: #a7c1ff;
+  box-shadow: 0 0 5px 4px rgba(167, 193, 255, 0.35);
+}
+
+.gError {
+  width: 100%;
+  margin-top: 10px;
+  color: #d32f2f;
+  font-size: 13px;
+}
+
+.gOptions {
+  width: 100%;
+  margin-top: 20px;
+  padding: 18px 16px;
+  border: 1px solid #eef1f4;
+  border-radius: 14px;
+  background: #fafafa;
+}
+
+.gOptionRow {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.gLabel {
+  color: #444;
+  font-size: 14px;
+}
+
+.gRadios {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.gRadio {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.gSmallInput {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  padding: 0 12px;
+  outline: none;
+  width: min(420px, 100%);
+  font-size: 14px;
+}
+
+.gSmallInput:focus {
+  border-color: #a7c1ff;
+  box-shadow: 0 0 5px 4px rgba(167, 193, 255, 0.25);
+}
+
+.gCheckbox {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.gButtons {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+.gBtn {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.gBtn:hover {
+  background: #f1f3f4;
+}
+
+.gBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gRunning {
+  margin-top: 14px;
+  color: #555;
+  font-size: 13px;
+}
+
+.gDirRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gPickBtn {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.gPickBtn:hover {
+  background: #f1f3f4;
+}
