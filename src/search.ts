@@ -88,7 +88,7 @@ export async function executeSearch(
       maxResults
     );
 
-    // 空データは弾く（タイトルもURLも空は意味がない）
+    // タイトルもURLも空のdataを削除
     results.push(...extracted.filter((r) => r.title || r.url));
   } catch (error) {
     console.error("検索処理中にエラーが発生しました:", error);

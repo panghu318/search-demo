@@ -80,6 +80,7 @@ npm run dev
 　（yahoo / startpage / duckduckgo）
 
 必要に応じて「ブラウザを表示する（headless=false）」を ON/OFF
+※ CSV が空の場合は「ブラウザを表示する」を ON にして再試行してください
 
 実行方法を選択
 
