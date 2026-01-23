@@ -14,7 +14,6 @@ export interface RunRequest {
   maxResults: number;
   outputDir: string;
   fileBaseName: string;
-  addTimestamp: boolean;
   showBrowser: boolean; // true: headless=false
 }
 
@@ -27,5 +26,5 @@ export interface RunResponse {
   count?: number;
   results?: SearchResult[];
   csvFileName?: string;
-  downloadUrl?: string;
+  csvFilePath?: string;
 }

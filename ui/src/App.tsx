@@ -6,7 +6,7 @@ type Engine = "yahoo" | "startpage" | "duckduckgo";
 export default function App() {
   const [keyword, setKeyword] = useState("");
   const [engine, setEngine] = useState<Engine>("yahoo");
-  const [outputDir, setOutputDir] = useState("output");
+  const [outputDir, setOutputDir] = useState("csv");
   const [showBrowser, setShowBrowser] = useState(true);
   const [running, setRunning] = useState(false);
   const [saveAsEnabled, setSaveAsEnabled] = useState(false);
@@ -155,7 +155,7 @@ export default function App() {
     // 通常モード：後端でファイル生成
     setRunning(true);
     try {
-      const baseName = makeCsvFileName().replace(/\.csv$/i, "");
+      const baseName = makeCsvFileName();
 
       const res = await fetch("http://localhost:3000/run", {
         method: "POST",
@@ -166,7 +166,6 @@ export default function App() {
           maxResults: 10,
           outputDir,
           fileBaseName: baseName,
-          addTimestamp: false,
           showBrowser,
         }),
       });
@@ -177,7 +176,7 @@ export default function App() {
         return;
       }
 
-      alert(`実行完了\nCSV：${data.downloadUrl}`);
+      alert(`実行完了\npath:\n${data.csvFilePath}`);
     } finally {
       setRunning(false);
     }
@@ -208,7 +207,9 @@ export default function App() {
           />
         </div>
 
-        {!keywordValid && <div className="gError">※ 検索キーワードは必須です</div>}
+        {!keywordValid && (
+          <div className="gError">※ 検索キーワードは必須です</div>
+        )}
 
         <div className="gOptions">
           <div className="gOptionRow">
@@ -239,16 +240,25 @@ export default function App() {
                     ? `保存先：選択済み（${saveAsFileName}）`
                     : outputDir
                 }
+                placeholder="保存フォルダを入力してください、例：csv"
                 onChange={(e) => setOutputDir(e.target.value)}
                 disabled={running || saveAsEnabled}
               />
 
               {!saveAsEnabled ? (
-                <button className="gPickBtn" onClick={onSaveAs} disabled={!canRun}>
+                <button
+                  className="gPickBtn"
+                  onClick={onSaveAs}
+                  disabled={!canRun}
+                >
                   別名で保存
                 </button>
               ) : (
-                <button className="gPickBtn" onClick={onCancelSaveAs} disabled={running}>
+                <button
+                  className="gPickBtn"
+                  onClick={onCancelSaveAs}
+                  disabled={running}
+                >
                   SaveAs解除
                 </button>
               )}
@@ -275,7 +285,9 @@ export default function App() {
           </button>
         </div>
 
-        {running && <div className="gRunning">実行中…（しばらくお待ちください）</div>}
+        {running && (
+          <div className="gRunning">実行中…（しばらくお待ちください）</div>
+        )}
       </div>
     </div>
   );

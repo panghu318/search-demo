@@ -3,8 +3,8 @@ import cors from "cors";
 import path from "path";
 import { executeSearch } from "./search";
 import { exportToCsvFile, toCsvString } from "./csv";
-import { buildCsvPath } from "./utils";
 import { Engine, RunRequest, RunResponse } from "./types";
+import {safeSubDir} from "./utils"
 
 const app = express();
 
@@ -12,32 +12,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// CSV ファイルをダウンロードできるように静的公開
-// 例: http://localhost:3000/files/xxx.csv
-app.use("/files", express.static(path.resolve(process.cwd(), "output")));
-
 // ヘルスチェック用 API
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
-});
+// app.get("/health", (_req, res) => {
+//   res.json({ ok: true });
+// });
 
 // 実行 API（検索 → 取得 → CSV 出力）
 app.post("/run", async (req, res) => {
   const body = req.body as Partial<RunRequest>;
 
-  // ---- 簡易バリデーション（最低限） ----
+  // ---- デフォルト値を設定 / バリデーション ----
   const keyword = (body.keyword ?? "").trim();
   const engine = (body.engine ?? "yahoo") as Engine;
 
-  const maxResultsRaw = Number(body.maxResults ?? 10);
-  const maxResults = Number.isFinite(maxResultsRaw)
-    ? Math.min(Math.max(maxResultsRaw, 1), 50)
-    : 10;
+  const maxResults = body.maxResults ?? 10;
 
-  const outputDir = (body.outputDir ?? "output").trim() || "output";
-  const fileBaseName = (body.fileBaseName ?? "result").trim() || "result";
-  const addTimestamp = Boolean(body.addTimestamp ?? true);
-  const showBrowser = Boolean(body.showBrowser ?? true);
+  const outputDir = (body.outputDir ?? "csv").trim() || "csv";
+  const fileBaseName = (body.fileBaseName ?? "keyword").trim() || "keyword";
+  const showBrowser = body.showBrowser ?? true;
 
   if (!keyword) {
     return res.status(400).json({ ok: false, message: "keyword is required" });
@@ -52,20 +44,13 @@ app.post("/run", async (req, res) => {
       !showBrowser
     );
 
-    // CSV 出力先パスを生成（タイムスタンプ付与可）
-    const csvPath = buildCsvPath({
-      outputDir,
-      fileBaseName,
-      addTimestamp,
-    });
+    const base = path.resolve(process.cwd(), "output");
+    const outputpath = safeSubDir(outputDir);
+    const filepath = path.resolve(base,outputpath,fileBaseName);
 
     // CSV ファイルを書き出し
-    exportToCsvFile(results, csvPath);
-
-    // ダウンロード用 URL を生成
-    // buildCsvPath は output 配下を返すため、/files 経由で参照可能
-    const fileName = path.basename(csvPath);
-    const downloadUrl = `/files/${fileName}`;
+    exportToCsvFile(results, filepath);
+    const csvFilePath = `${filepath}`
 
     const response: RunResponse = {
       ok: true,
@@ -73,8 +58,8 @@ app.post("/run", async (req, res) => {
       keyword,
       count: results.length,
       results,
-      csvFileName: fileName,
-      downloadUrl,
+      csvFileName: fileBaseName,
+      csvFilePath,
     };
 
     return res.json(response);
@@ -91,12 +76,9 @@ app.post("/csv", async (req, res) => {
   const keyword = (body.keyword ?? "").trim();
   const engine = (body.engine ?? "yahoo") as Engine;
 
-  const maxResultsRaw = Number(body.maxResults ?? 10);
-  const maxResults = Number.isFinite(maxResultsRaw)
-    ? Math.min(Math.max(maxResultsRaw, 1), 50)
-    : 10;
+  const maxResults = body.maxResults ?? 10;
 
-  const showBrowser = Boolean(body.showBrowser ?? true);
+  const showBrowser = body.showBrowser ?? true;
 
   if (!keyword) return res.status(400).send("keyword is required");
 
@@ -112,8 +94,7 @@ app.post("/csv", async (req, res) => {
     const csv = toCsvString(results);
 
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    // ブラウザにダウンロード可能なレスポンスであることを通知
-    res.setHeader("Content-Disposition", 'attachment; filename="result.csv"');
+    res.setHeader("Content-Disposition", 'attachment; filename="keyword.csv"');
 
     return res.send(csv);
   } catch (e) {
