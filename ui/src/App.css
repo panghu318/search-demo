@@ -111,6 +111,13 @@
   color: #333;
 }
 
+.gCheckRow {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .gButtons {
   margin-top: 18px;
   display: flex;

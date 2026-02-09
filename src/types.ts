@@ -15,6 +15,7 @@ export interface RunRequest {
   outputDir: string;
   fileBaseName: string;
   showBrowser: boolean; // true: headless=false
+  captureScreenshots: boolean;
 }
 
 // 実行結果（APIレスポンス）
@@ -27,4 +28,5 @@ export interface RunResponse {
   results?: SearchResult[];
   csvFileName?: string;
   csvFilePath?: string;
+  screenshotSheetPath?: string;
 }

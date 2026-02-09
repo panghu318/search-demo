@@ -1,4 +1,4 @@
-import "./app.css";
+﻿import "./app.css";
 import { useState } from "react";
 
 type Engine = "yahoo" | "startpage" | "duckduckgo";
@@ -6,8 +6,9 @@ type Engine = "yahoo" | "startpage" | "duckduckgo";
 export default function App() {
   const [keyword, setKeyword] = useState("");
   const [engine, setEngine] = useState<Engine>("yahoo");
-  const [outputDir, setOutputDir] = useState("csv");
+  const [outputDir, setOutputDir] = useState("output");
   const [showBrowser, setShowBrowser] = useState(true);
+  const [captureScreenshots, setCaptureScreenshots] = useState(true);
   const [running, setRunning] = useState(false);
   const [saveAsEnabled, setSaveAsEnabled] = useState(false);
   const [saveAsFileName, setSaveAsFileName] = useState("");
@@ -72,6 +73,8 @@ export default function App() {
         engine,
         maxResults: 10,
         showBrowser,
+        captureScreenshots,
+        outputDir,
       }),
     });
     if (!res.ok) throw new Error("CSV ダウンロード失敗");
@@ -167,6 +170,7 @@ export default function App() {
           outputDir,
           fileBaseName: baseName,
           showBrowser,
+          captureScreenshots,
         }),
       });
 
@@ -203,6 +207,7 @@ export default function App() {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="検索キーワードを入力してください、例：LOL"
+
             disabled={running}
           />
         </div>
@@ -240,7 +245,8 @@ export default function App() {
                     ? `保存先：選択済み（${saveAsFileName}）`
                     : outputDir
                 }
-                placeholder="保存フォルダを入力してください、例：csv"
+                placeholder="保存フォルダを入力してください、例：output"
+                title="複数回実行する場合は、区別できるように異なる内容を入力することをおすすめします。"
                 onChange={(e) => setOutputDir(e.target.value)}
                 disabled={running || saveAsEnabled}
               />
@@ -267,15 +273,27 @@ export default function App() {
 
           <div className="gOptionRow">
             <div className="gLabel"></div>
-            <label className="gCheckbox">
-              <input
-                type="checkbox"
-                checked={showBrowser}
-                onChange={(e) => setShowBrowser(e.target.checked)}
-                disabled={running}
-              />
-              <span>ブラウザを表示する</span>
-            </label>
+            <div className="gCheckRow">
+              <label className="gCheckbox">
+                <input
+                  type="checkbox"
+                  checked={showBrowser}
+                  onChange={(e) => setShowBrowser(e.target.checked)}
+                  disabled={running}
+                />
+                <span>ブラウザを表示する</span>
+              </label>
+
+              <label className="gCheckbox">
+                <input
+                  type="checkbox"
+                  checked={captureScreenshots}
+                  onChange={(e) => setCaptureScreenshots(e.target.checked)}
+                  disabled={running}
+                />
+                <span>キャプチャする</span>
+              </label>
+            </div>
           </div>
         </div>
 

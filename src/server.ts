@@ -27,9 +27,10 @@ app.post("/run", async (req, res) => {
 
   const maxResults = body.maxResults ?? 10;
 
-  const outputDir = (body.outputDir ?? "csv").trim() || "csv";
+  const outputDir = (body.outputDir ?? "output").trim() || "output";
   const fileBaseName = (body.fileBaseName ?? "keyword").trim() || "keyword";
   const showBrowser = body.showBrowser ?? true;
+  const captureScreenshots = body.captureScreenshots ?? false;
 
   if (!keyword) {
     return res.status(400).json({ ok: false, message: "keyword is required" });
@@ -37,16 +38,19 @@ app.post("/run", async (req, res) => {
 
   // ---- 実行処理 ----
   try {
-    const results = await executeSearch(
+    const outputPath = safeSubDir(outputDir);
+    const outputBaseDir = path.resolve(process.cwd(), "output", outputPath);
+    const { results, screenshotSheetPath } = await executeSearch(
       engine,
       keyword,
       maxResults,
-      !showBrowser
+      !showBrowser,
+      captureScreenshots,
+      outputBaseDir
     );
 
-    const base = path.resolve(process.cwd(), "output");
-    const outputpath = safeSubDir(outputDir);
-    const filepath = path.resolve(base,outputpath,fileBaseName);
+    const csvDir = path.resolve(outputBaseDir, "csv");
+    const filepath = path.resolve(csvDir, fileBaseName);
 
     // CSV ファイルを書き出し
     exportToCsvFile(results, filepath);
@@ -61,6 +65,9 @@ app.post("/run", async (req, res) => {
       csvFileName: fileBaseName,
       csvFilePath,
     };
+    if (screenshotSheetPath) {
+      response.screenshotSheetPath = screenshotSheetPath;
+    }
 
     return res.json(response);
   } catch (e) {
@@ -79,15 +86,21 @@ app.post("/csv", async (req, res) => {
   const maxResults = body.maxResults ?? 10;
 
   const showBrowser = body.showBrowser ?? true;
+  const captureScreenshots = body.captureScreenshots ?? false;
+  const outputDir = (body.outputDir ?? "output").trim() || "output";
 
   if (!keyword) return res.status(400).send("keyword is required");
 
   try {
-    const results = await executeSearch(
+    const outputPath = safeSubDir(outputDir);
+    const outputBaseDir = path.resolve(process.cwd(), "output", outputPath);
+    const { results } = await executeSearch(
       engine,
       keyword,
       maxResults,
-      !showBrowser
+      !showBrowser,
+      captureScreenshots,
+      outputBaseDir
     );
 
     // CSV 文字列を生成（ファイル保存は行わない）
