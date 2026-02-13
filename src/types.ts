@@ -30,3 +30,18 @@ export interface RunResponse {
   csvFilePath?: string;
   screenshotSheetPath?: string;
 }
+
+// スクリーンショットの記録情報
+export type ScreenshotEntry = {
+  seq: number;
+  label: string;
+  path: string;
+  width: number;
+  height: number;
+};
+
+// 検索実行結果（スクリーンショット表のパス含む）
+export type ExecuteSearchResult = {
+  results: SearchResult[];
+  screenshotSheetPath?: string;
+};

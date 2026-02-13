@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 import fs from "fs";
 import path from "path";
 import ExcelJS from "exceljs";
-import { SearchResult, Engine } from "./types";
+import { SearchResult, Engine, ScreenshotEntry, ExecuteSearchResult } from "./types";
 
 // 検索サイトごとの設定
 function getSiteConfig(engine: Engine) {
@@ -28,19 +28,7 @@ function getSiteConfig(engine: Engine) {
   }
 }
 
-type ScreenshotEntry = {
-  seq: number;
-  label: string;
-  path: string;
-  width: number;
-  height: number;
-};
-
-type ExecuteSearchResult = {
-  results: SearchResult[];
-  screenshotSheetPath?: string;
-};
-
+//スクリーンショットの情報設定
 const SHEET_MAX_WIDTH_PX = 900;
 const SHEET_ROW_HEIGHT_PX = 20;
 const SHEET_SPACING_PX = 40;
